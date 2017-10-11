@@ -1,0 +1,7 @@
+parameters:
+    ignoreErrors:
+        # Ignore PHPUnit mock stuff
+        - '#PHPUnit_Framework_MockObject_MockObject.* given#'
+
+        # Ignore symfony/expression-language missing classes
+        - '#Symfony\\Component\\ExpressionLanguage\\ExpressionLanguage not found#'
