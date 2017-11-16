@@ -26,10 +26,8 @@ use Zend\Expressive\Router\FastRouteRouter;
 
 final class RegisterServices implements CompilerPassInterface
 {
-    private const MESSAGE_INVALID_ROUTE = 'You must specify the "app", "route_name", "path", and "type" arguments in '
+    private const MESSAGE_INVALID_ROUTE = 'You must specify the "route_name", "path", and "type" arguments in '
                                           . '"%s" (tag "%s").';
-
-    private const MESSAGE_INVALID_MIDDLEWARE = 'You must specify the "app" argument in "%s" (tag "%s").';
 
     private const OVERRIDABLE_DEPENDENCIES = [
         'response_generator' => ResponseGenerator::class,
@@ -178,7 +176,7 @@ final class RegisterServices implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds(Tags::ROUTE) as $serviceId => $tags) {
             foreach ($tags as $tag) {
-                if (! isset($tag['app'], $tag['route_name'], $tag['path'], $tag['type'])) {
+                if (! isset($tag['route_name'], $tag['path'], $tag['type'])) {
                     throw new InvalidArgumentException(
                         \sprintf(self::MESSAGE_INVALID_ROUTE, $serviceId, Tags::ROUTE)
                     );
@@ -188,6 +186,7 @@ final class RegisterServices implements CompilerPassInterface
                     $tag['methods'] = explode(',', $tag['methods']);
                 }
 
+                $tag['app']   = $tag['app'] ?? $this->applicationName;
                 $tag['async'] = (bool) ($tag['async'] ?? false);
 
                 $routes[$tag['app']]   = $routes[$tag['app']] ?? [];
@@ -209,13 +208,8 @@ final class RegisterServices implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds(Tags::MIDDLEWARE) as $serviceId => $tags) {
             foreach ($tags as $tag) {
-                if (! isset($tag['app'])) {
-                    throw new InvalidArgumentException(
-                        sprintf(self::MESSAGE_INVALID_MIDDLEWARE, $serviceId, Tags::MIDDLEWARE)
-                    );
-                }
-
-                $priority = $tag['priority'] ?? 0;
+                $priority   = $tag['priority'] ?? 0;
+                $tag['app'] = $tag['app'] ?? $this->applicationName;
 
                 $middlewares[$tag['app']]              = $middlewares[$tag['app']] ?? [];
                 $middlewares[$tag['app']][$priority]   = $middlewares[$tag['app']][$priority] ?? [];
