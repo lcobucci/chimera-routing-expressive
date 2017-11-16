@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Lcobucci\Chimera\Routing\Expressive\Tests;
 
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Lcobucci\Chimera\Routing\Attributes;
 use Lcobucci\Chimera\Routing\Expressive\ResponseGenerator;
 use Lcobucci\Chimera\Routing\Expressive\ResultConverter;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\ServerRequest;
+use Zend\Expressive\Router\Route;
+use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
 
 final class ResponseGeneratorTest extends \PHPUnit\Framework\TestCase
@@ -68,6 +71,38 @@ final class ResponseGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->router->expects($this->once())
                      ->method('generateUri')
                      ->with('test', ['id' => 1])
+                     ->willReturn('/testing/1');
+
+        $this->converter->expects($this->once())
+                        ->method('convert')
+                        ->with($request, ['Location' => '/testing/1'], 'testing')
+                        ->willReturn($response);
+
+        self::assertSame($response, $generator->generateResponse($request, 'testing'));
+    }
+
+    /**
+     * @test
+     *
+     * @covers \Lcobucci\Chimera\Routing\Expressive\ResponseGenerator
+     */
+    public function generateResponseShouldPassHeadersToConverterWhenIdWasGeneratedAlsoAddingMatchedRouteParams(): void
+    {
+        $generator = new ResponseGenerator($this->router, $this->converter);
+        $response  = new EmptyResponse();
+
+        $routeResult = RouteResult::fromRoute(
+            new Route('/test', $this->createMock(MiddlewareInterface::class)),
+            ['id' => 123, 'test' => 'test']
+        );
+
+        $request = (new ServerRequest())->withAttribute(Attributes::GENERATED_ID, 1)
+                                          ->withAttribute(Attributes::RESOURCE_LOCATION, 'test')
+                                          ->withAttribute(RouteResult::class, $routeResult);
+
+        $this->router->expects($this->once())
+                     ->method('generateUri')
+                     ->with('test', ['id' => 1, 'test' => 'test'])
                      ->willReturn('/testing/1');
 
         $this->converter->expects($this->once())
