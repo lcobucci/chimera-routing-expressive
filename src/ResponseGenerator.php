@@ -9,6 +9,7 @@ use Lcobucci\Chimera\Routing\ResponseGenerator as ResponseGeneratorInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\EmptyResponse;
+use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
 
 final class ResponseGenerator implements ResponseGeneratorInterface
@@ -51,7 +52,7 @@ final class ResponseGenerator implements ResponseGeneratorInterface
         return [
             'Location' => $this->router->generateUri(
                 $request->getAttribute(Attributes::RESOURCE_LOCATION),
-                ['id' => (string) $generatedId]
+                $this->buildRouteArguments($request, (string) $generatedId)
             )
         ];
     }
@@ -65,5 +66,17 @@ final class ResponseGenerator implements ResponseGeneratorInterface
         }
 
         return isset($headers['Location']) ? ResponseStatus::STATUS_CREATED : ResponseStatus::STATUS_NO_CONTENT;
+    }
+
+    private function buildRouteArguments(ServerRequestInterface $request, string $generatedId): array
+    {
+        /** @var RouteResult|null $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+
+        if ($routeResult === null) {
+            return ['id' => $generatedId];
+        }
+
+        return ['id' => $generatedId] + $routeResult->getMatchedParams();
     }
 }
