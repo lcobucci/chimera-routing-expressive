@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Lcobucci\Chimera\Routing\Expressive\Tests;
 
 use Lcobucci\Chimera\Routing\Expressive\JsonConverter;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
 final class JsonConverterTest extends \PHPUnit\Framework\TestCase
