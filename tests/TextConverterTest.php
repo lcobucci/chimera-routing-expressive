@@ -3,34 +3,34 @@ declare(strict_types=1);
 
 namespace Lcobucci\Chimera\Routing\Expressive\Tests;
 
-use Lcobucci\Chimera\Routing\Expressive\JsonConverter;
+use Lcobucci\Chimera\Routing\Expressive\TextConverter;
 use Zend\Diactoros\ServerRequest;
 
-final class JsonConverterTest extends \PHPUnit\Framework\TestCase
+final class TextConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
      *
-     * @covers \Lcobucci\Chimera\Routing\Expressive\JsonConverter
+     * @covers \Lcobucci\Chimera\Routing\Expressive\TextConverter
      */
-    public function convertShouldReturnAJsonResponseWithTheProvidedResult(): void
+    public function convertShouldReturnATextResponseWithTheProvidedResult(): void
     {
-        $converter = new JsonConverter();
+        $converter = new TextConverter();
         $response  = $converter->convert(new ServerRequest(), [], 'testing');
 
-        self::assertSame('"testing"', (string) $response->getBody());
+        self::assertSame('testing', (string) $response->getBody());
         self::assertSame(200, $response->getStatusCode());
-        self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
+        self::assertSame('text/plain', $response->getHeaderLine('Content-Type'));
     }
 
     /**
      * @test
      *
-     * @covers \Lcobucci\Chimera\Routing\Expressive\JsonConverter
+     * @covers \Lcobucci\Chimera\Routing\Expressive\TextConverter
      */
     public function convertShouldAppendHeadersToTheResponse(): void
     {
-        $converter = new JsonConverter();
+        $converter = new TextConverter();
         $response  = $converter->convert(new ServerRequest(), ['Content-Language' => 'en_UK'], 'testing');
 
         self::assertSame('en_UK', $response->getHeaderLine('Content-Language'));
