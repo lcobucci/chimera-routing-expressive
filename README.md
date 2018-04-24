@@ -36,6 +36,28 @@ you can install it using [Composer](http://getcomposer.org).
 composer require lcobucci/chimera-routing-expressive
 ```
 
+### PHP Configuration
+
+In order to make sure that we're dealing with the correct data, we're using `assert()`,
+which is a very interesting feature in PHP but not often used. The nice thing
+about `assert()` is that we can (and should) disable it in production mode so
+that we don't have useless statements.
+
+So, for production mode, we recommend you to set `zend.assertions` to `-1` in your `php.ini`.
+For development you should leave `zend.assertions` as `1` and set `assert.exception` to `1`, which
+will make PHP throw an [`AssertionError`](https://secure.php.net/manual/en/class.assertionerror.php)
+when things go wrong.
+
+Check the documentation for more information: https://secure.php.net/manual/en/function.assert.php
+
+
+## Usage
+
+To use this package you need to configured your Zend Expressive application to
+use our packages (as explained [here](https://github.com/lcobucci/chimera-routing#usage))
+and register instances of `Lcobucci\Chimera\Routing\Expressive\UriGenerator` and
+`Lcobucci\Chimera\Routing\Expressive\RouteParamsExtractor` in your DI container. 
+
 ## License
 
 MIT, see [LICENSE file](https://github.com/lcobucci/chimera-routing-expressive/blob/master/LICENSE).
