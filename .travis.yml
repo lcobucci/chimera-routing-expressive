@@ -22,9 +22,11 @@ script:
 jobs:
   allow_failures:
     - php: nightly
+    - env: STATIC_ANALYSIS=1
 
   include:
-    - stage: Coverage
+    - stage: Code Quality
+      env: TEST_COVERAGE=1
       before_script:
         - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
         - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
@@ -34,10 +36,12 @@ jobs:
         - wget https://scrutinizer-ci.com/ocular.phar
         - php ocular.phar code-coverage:upload --format=php-clover ./clover.xml
 
-    - stage: Code standard
+    - stage: Code Quality
+      env: CODE_STANDARD=1
       script:
         - ./vendor/bin/phpcs
 
-    - stage: Static Analysis
+    - stage: Code Quality
+      env: STATIC_ANALYSIS=1
       script:
-        - ./vendor/bin/phpstan analyse -c phpstan.neon -l max src tests
+        - ./vendor/bin/phpstan analyse
