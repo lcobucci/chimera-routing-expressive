@@ -50,6 +50,14 @@ when things go wrong.
 
 Check the documentation for more information: https://secure.php.net/manual/en/function.assert.php
 
+
+## Usage
+
+To use this package you need to configured your Zend Expressive application to
+use our packages (as explained [here](https://github.com/lcobucci/chimera-routing#usage))
+and register instances of `Lcobucci\Chimera\Routing\Expressive\UriGenerator` and
+`Lcobucci\Chimera\Routing\Expressive\RouteParamsExtractor` in your DI container. 
+
 ## License
 
 MIT, see [LICENSE file](https://github.com/lcobucci/chimera-routing-expressive/blob/master/LICENSE).
