@@ -25,11 +25,7 @@
     "require-dev": {
         "phpstan/phpstan": "^0.8",
         "phpunit/phpunit": "^6.4",
-        "squizlabs/php_codesniffer": "^3.1",
-        "symfony/dependency-injection": "^3.3"
-    },
-    "suggests": {
-        "symfony/dependency-injection": "In order to use the provided compiler passes"
+        "squizlabs/php_codesniffer": "^3.1"
     },
     "autoload": {
         "psr-4": {
